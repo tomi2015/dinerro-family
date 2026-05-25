@@ -699,6 +699,20 @@ function procesarFoto(event) {
 }
 
 // ──────────────────────────────────────────────────────
+//  ENVIAR DATOS A GOOGLE SHEETS
+// ──────────────────────────────────────────────────────
+async function enviarASheets(hoja, fila) {
+  try {
+    await fetch("/api/sheets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hoja: hoja, fila: fila })
+    });
+  } catch (error) {
+    console.log("Error enviando a Sheets:", error);
+  }
+}
+// ──────────────────────────────────────────────────────
 //  GUARDAR EGRESO (GASTO)
 // ──────────────────────────────────────────────────────
 function guardarEgreso() {
@@ -726,6 +740,8 @@ function guardarEgreso() {
   // Guardarlo en memoria y en localStorage
   datos.egresos.push(egreso);
   localStorage.setItem("egresos", JSON.stringify(datos.egresos));
+  enviarASheets("EGRESOS", [fecha, concepto, parseFloat(monto), categoria]);
+  enviarASheets("EGRESOS", [fecha, concepto, parseFloat(monto), categoria]);
 
   // Limpiar el formulario
   document.getElementById("egreso-monto").value    = "";
@@ -1052,4 +1068,4 @@ window.addEventListener("load", () => {
 });
 </script>
 </body>
-</html>
+</html> 
